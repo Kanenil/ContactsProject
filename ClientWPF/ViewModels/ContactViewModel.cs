@@ -381,18 +381,9 @@ namespace ClientWPF.ViewModels
                             foreach (var item in Attachments)
                                 attachments.Add(item.Text);
 
-                        //Thread t = new Thread(() => {
-                            
-
-                        //    SendMessage(message, attachments);
-                        //});
-                        //t.Start();
-                        
-                        //t.ThreadState.HasFlag(ThreadState.Running);
 
                         Task.WaitAll(Task.Run(()=>SendMessage(message,attachments)));
 
-                        //SendMessage();
                         MessageNull();
                         wnd.Close();
                     }
