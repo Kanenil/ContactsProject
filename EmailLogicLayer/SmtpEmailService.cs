@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SendEmailAndSMSConsole
 {
@@ -23,7 +24,7 @@ namespace SendEmailAndSMSConsole
                 Password = "OIA39mPgQp8Xk0we"
             };
         }
-        public void Send(Message message, Multipart attachments)
+        public async Task Send(Message message, List<string> attachments = null)
         {
             var bodyBuilder = new BodyBuilder();
             bodyBuilder.HtmlBody = message.Body;
@@ -32,11 +33,12 @@ namespace SendEmailAndSMSConsole
             emailMessage.To.Add(new MailboxAddress(message.To));
             emailMessage.Subject = message.Subject;
 
-            var multipart = new Multipart("mixed");
-            multipart.Add(bodyBuilder.ToMessageBody());
-            multipart.Add(attachments);
+            if (attachments != null)
+                foreach (var attachment in attachments)
+                    bodyBuilder.Attachments.Add(attachment);
+            
 
-            emailMessage.Body = multipart;
+            emailMessage.Body = bodyBuilder.ToMessageBody();
 
             using (var client = new SmtpClient())
             {
@@ -44,7 +46,7 @@ namespace SendEmailAndSMSConsole
                 {
                     client.Connect(_configuration.SmtpServer, _configuration.Port, true);
                     client.Authenticate(_configuration.UserName, _configuration.Password);
-                    client.Send(emailMessage);
+                    await client.SendAsync(emailMessage);
                 }
                 catch (Exception ex)
                 {

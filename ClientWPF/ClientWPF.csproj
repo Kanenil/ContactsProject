@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BusinnesLogicLayer\BusinnesLogicLayer.csproj" />
+    <ProjectReference Include="..\EmailLogicLayer\EmailLogicLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

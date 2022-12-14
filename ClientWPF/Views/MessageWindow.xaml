@@ -7,7 +7,8 @@
         xmlns:local="clr-namespace:ClientWPF.ViewModels"
         d:DataContext="{d:DesignInstance Type=local:ContactViewModel}"
         mc:Ignorable="d"
-        Title="MessageWindow" Height="450" Width="950">
+        Title="MessageWindow" Height="450" Width="950"
+        Name="MessageWND">
 
     <Window.Background>
         <ImageBrush ImageSource="Images/backgroundImage.jpg"/>
@@ -34,6 +35,13 @@
             <Setter Property="Height" Value="20"></Setter>
             <Setter Property="Width" Value="50"></Setter>
         </Style>
+        <Style TargetType="ToggleButton">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="Background" Value="YellowGreen"></Setter>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+        </Style>
     </Window.Resources>
 
     <Grid Margin="40" Background="#FF1877D0">
@@ -45,12 +53,12 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal">
-            <TextBox Margin="20,0" Text="{Binding Path=Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Subject"/>
+            <TextBox Name="Subject" Margin="20,0" Width="280" Text="{Binding Path=Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Subject"/>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBox Margin="20,0" MinWidth="220" FontSize="14" Text="{Binding Path=From, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="From" IsEnabled="False"/>
-            <TextBox Margin="20,0" MinWidth="220" FontSize="14" Text="{Binding Path=To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="To" IsEnabled="False"/>
+            <TextBox Name="From" Margin="20,0" MinWidth="230" FontSize="14" Text="{Binding Path=From, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="From" IsEnabled="False"/>
+            <TextBox Name="To" Margin="20,0" MinWidth="230" FontSize="14" Text="{Binding Path=To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="To" IsEnabled="False"/>
         </StackPanel>
 
         <TextBox Grid.Row="1" 
@@ -58,20 +66,59 @@
                  Margin="20, 0"
                  MinHeight="200"
                  Text="{Binding Path=Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                 ToolTip="Body"/>
+                 ToolTip="Body"
+                 Name="Body"/>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Grid.Row="2" Margin="20,0" Command="{Binding AddAttachment}" Content="Add Atachment" Width="auto"/>
-            <TextBlock Text="{Binding Path=Attachments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Margin="20,0" Command="{Binding AddAttachment}" Content="Add Atachment" Width="auto"/>
+            <ToggleButton Content="Show Attachments" 
+                          Name="attachements" 
+                          Width="auto"
+                          IsChecked="{Binding ElementName=close, Path=IsChecked}"/>
         </StackPanel>
+
+        <Popup Placement="Center"
+               Margin="20"
+               MinHeight="300"
+               MinWidth="300"
+               IsOpen="{Binding IsChecked, ElementName=attachements}">
+            <Border BorderThickness="5"
+                    BorderBrush="#3772FF"
+                    Background="#1d2335">
+                <Grid>
+                    <StackPanel>
+                        <DataGrid Grid.Row="1" CanUserAddRows="False" FontSize="14" HorizontalAlignment ="Center" Name="ListAttachments" AutoGenerateColumns="False" ItemsSource="{Binding Attachments}" Margin="5">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn IsReadOnly="True" Header="File name" Binding="{Binding Path=Text}"/>
+                                <DataGridTemplateColumn>
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <Button Background="Red" Command="{Binding Path=DataContext.DeleteAttachment, 
+                                RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding ElementName=ListAttachments , Path=SelectedItem}">Delete</Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                    <ToggleButton Content="Close" x:Name="close" Width="auto" Margin="0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                </Grid>
+            </Border>
+        </Popup>
 
         <StackPanel Grid.Row="3" 
                     Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <Button Content="Send"/>
+            <Button Content="Send" Command="{Binding SendMessageCommand}" 
+                    CommandParameter="{Binding ElementName=MessageWND}"/>
             <Button Content="Cancel"
-                    Margin="10"/>
+                    Margin="10"
+                    Command="{Binding CloseMessage}"/>
         </StackPanel>
+
+        
 
     </Grid>
 </Window>

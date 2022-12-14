@@ -14,6 +14,13 @@ using System.Windows.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.Win32;
+using ClientWPF.Models;
+using SendEmailAndSMSConsole;
+using MimeKit;
+using System.IO;
+using System.Threading;
+using System.Windows.Threading;
+using System.Threading.Tasks;
 
 namespace ClientWPF.ViewModels
 {
@@ -150,6 +157,31 @@ namespace ClientWPF.ViewModels
             }
             return errorItem;
         }
+        private bool ErrorMessage(Window wnd)
+        {
+            bool errorItem = false;
+            if (From == null || From.Replace(" ", "").Length == 0)
+            {
+                SetRedBlockControll(wnd, "From");
+                errorItem = true;
+            }
+            if (To == null || To.Replace(" ", "").Length == 0)
+            {
+                SetRedBlockControll(wnd, "To");
+                errorItem = true;
+            }
+            if (Subject == null || Subject.Replace(" ", "").Length == 0)
+            {
+                SetRedBlockControll(wnd, "Subject");
+                errorItem = true;
+            }
+            if (Body == null || Body.Replace(" ", "").Length == 0)
+            {
+                SetRedBlockControll(wnd, "Phone");
+                errorItem = true;
+            }
+            return errorItem;
+        }
         private void SaveAddContact()
         {
             ContactView = new ContactDTO();
@@ -195,6 +227,15 @@ namespace ClientWPF.ViewModels
             PatronymicView = null;
             PhoneView = null;
             EmailView = null;
+        }
+        private void MessageNull()
+        {
+            ContactView = null;
+            From = null;
+            To = null;
+            Subject = null;
+            Body = null;
+            Attachments = null;
         }
         ///////////////////////////////Find item
         private string searchString = string.Empty;
@@ -275,11 +316,20 @@ namespace ClientWPF.ViewModels
             To = ContactView.Email;
             From = "oleksandr.burda@ukr.net";
         }
+        ///////////////////////////////Close Message Window
+        private ICommand _CloseMessage;
+        public ICommand CloseMessage => _CloseMessage ??= new LambdaCommand(OnCloseMessageCommandExecuted, CanCloseMessageCommandExecute);
+        private bool CanCloseMessageCommandExecute(object p) => true;
+        private void OnCloseMessageCommandExecuted(object p)
+        {
+            _windowMessage.Close();
+            MessageNull();
+        }
         ///////////////////////////////message item
         public string Subject { get; set; }
         public string Body { get; set; }
-        private List<string> _attachments;
-        public string Attachments { get; set; }
+        private List<AttachmentText> _attachments;
+        public List<AttachmentText> Attachments { get => _attachments; set { _attachments = value; OnPropertyChanged(); } }
         public string To { get; set; }
         public string From { get; set; }
         ///////////////////////////////add Attachment
@@ -296,14 +346,76 @@ namespace ClientWPF.ViewModels
                         openFile.Multiselect = true;
                         if(openFile.ShowDialog(_windowMessage) != false)
                         {
-                            _attachments = new List<string>();
+                            var attachments = new List<AttachmentText>();
                             foreach (var item in openFile.FileNames)
-                                _attachments.Add(item);
-                            Attachments = $"Current attachments: {_attachments.Count}";
+                                attachments.Add(new AttachmentText() { Text = item});
+                            Attachments = attachments;
                         }
                     }));
             }
         }
         ///////////////////////////////send message
+        private async void SendMessage(EmailLogicLayer.Message message, List<string> attachments)
+        {
+            SmtpEmailService emailService = new SmtpEmailService();
+            await emailService.Send(message, attachments);
+        }
+        private RelayCommand _sendMessage;
+        public RelayCommand SendMessageCommand
+        {
+            get
+            {
+                return _sendMessage ?? new RelayCommand(obj =>
+                {
+                    Window wnd = obj as Window;
+                    if (!ErrorMessage(wnd))
+                    {
+                        var message = new EmailLogicLayer.Message()
+                        {
+                            Body = Body,
+                            To = To,
+                           Subject = Subject
+                        };
+                        var attachments = new List<string>();
+                        if (Attachments != null)
+                            foreach (var item in Attachments)
+                                attachments.Add(item.Text);
+
+                        //Thread t = new Thread(() => {
+                            
+
+                        //    SendMessage(message, attachments);
+                        //});
+                        //t.Start();
+                        
+                        //t.ThreadState.HasFlag(ThreadState.Running);
+
+                        Task.WaitAll(Task.Run(()=>SendMessage(message,attachments)));
+
+                        //SendMessage();
+                        MessageNull();
+                        wnd.Close();
+                    }
+                }
+                );
+            }
+        }
+        //////////////////////////////Delete attachment
+        private RelayCommand _DeleteAttachment;
+        public RelayCommand DeleteAttachment
+        {
+            get
+            {
+                return _DeleteAttachment ?? (_DeleteAttachment =
+                    new RelayCommand(obj =>
+                    {
+                        if (MessageBoxQuestion("Delete this attachment?", "Delete Form Closing") == MessageBoxResult.Yes)
+                        {
+                            _attachments.Remove((AttachmentText)obj);
+                            Attachments = _attachments;
+                        }
+                    }));
+            }
+        }
     }
 }
