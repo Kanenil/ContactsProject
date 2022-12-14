@@ -86,7 +86,6 @@ namespace ClientWPF.ViewModels
         }
         ///////////////////////////////Add new contact and Edit item
         public string ButtonContent { get; set; }
-
         public ContactDTO ContactView;
         public string SurnameView { get; set; }
         public string NameView { get; set; }
@@ -247,5 +246,42 @@ namespace ClientWPF.ViewModels
             var result = MessageBox.Show(message, caption, MessageBoxButton.YesNo);
             return result;
         }
+        //////////////////////////////Send message window
+        static MessageWindow _windowMessage;
+        private ICommand _OpenMessageWindow;
+        public ICommand MessageOpenWindow => _OpenMessageWindow ??= new LambdaCommand(OnOpenMessageWindowExecude, CanOpenMessageWindowExecude);
+        private static bool CanOpenMessageWindowExecude(object p) => _windowMessage == null;
+        public void OnOpenMessageWindowExecude(object p)
+        {
+            MessageWindowParametrs(p);
+            var window = new MessageWindow(this)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            _windowMessage = window;
+            window.Closed += OnMessageWindowClosed;
+            window.ShowDialog();
+        }
+        private void OnMessageWindowClosed(object sender, EventArgs e)
+        {
+            ((Window)sender).Closed -= OnMessageWindowClosed;
+            _windowMessage = null;
+        }
+        ///////////////////////////////Message Window parametr
+        private void MessageWindowParametrs(object p)
+        {
+            ContactView = (ContactDTO)p;
+            To = ContactView.Email;
+            From = "oleksandr.burda@ukr.net";
+        }
+        ///////////////////////////////message item
+        public string Subject { get; set; }
+        public string Body { get; set; }
+        public string Attachments { get; set; }
+        public string To { get; set; }
+        public string From { get; set; }
+        ///////////////////////////////add Attachment
+
+        ///////////////////////////////send message
     }
 }

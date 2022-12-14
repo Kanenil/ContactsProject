@@ -1,0 +1,77 @@
+﻿<Window x:Class="ClientWPF.Views.MessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cmd="clr-namespace:ClientWPF.Commands"
+        xmlns:local="clr-namespace:ClientWPF.ViewModels"
+        d:DataContext="{d:DesignInstance Type=local:ContactViewModel}"
+        mc:Ignorable="d"
+        Title="MessageWindow" Height="450" Width="950">
+
+    <Window.Background>
+        <ImageBrush ImageSource="Images/backgroundImage.jpg"/>
+    </Window.Background>
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="18"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Height" Value="30"></Setter>
+            <Setter Property="Width" Value="150"></Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="Background" Value="YellowGreen"></Setter>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="40" Background="#FF1877D0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBox Margin="20,0" Text="{Binding Path=Subject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="Subject"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBox Margin="20,0" MinWidth="220" FontSize="14" Text="{Binding Path=From, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="From" IsEnabled="False"/>
+            <TextBox Margin="20,0" MinWidth="220" FontSize="14" Text="{Binding Path=To, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTip="To" IsEnabled="False"/>
+        </StackPanel>
+
+        <TextBox Grid.Row="1" 
+                 Width="auto"
+                 Margin="20, 0"
+                 MinHeight="200"
+                 Text="{Binding Path=Body, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ToolTip="Body"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Grid.Row="2" Margin="20,0" Content="Add Atachment" Width="auto"/>
+            <TextBlock Text="{Binding Path=Attachments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" 
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Content="Send"/>
+            <Button Content="Cancel"
+                    Margin="10"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:ClientWPF.ViewModels"
         d:DataContext="{d:DesignInstance Type=local:ContactViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="750">
+        Title="MainWindow" Height="450" Width="950">
     
     <Window.Background>
         <ImageBrush ImageSource="Images/backgroundImage.jpg"/>
@@ -76,6 +76,16 @@
                             <StackPanel>
                                 <Button Background="Red" Command="{Binding Path=DataContext.DeleteContact, 
                                 RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding ElementName=ListContact , Path=SelectedItem}">Delete</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Button Background="Green" Foreground="White" Width="80" Command="{Binding Path=DataContext.MessageOpenWindow, 
+                                RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding ElementName=ListContact , Path=SelectedItem}">Message</Button>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
