@@ -61,7 +61,7 @@
                  ToolTip="Body"/>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <Button Grid.Row="2" Margin="20,0" Content="Add Atachment" Width="auto"/>
+            <Button Grid.Row="2" Margin="20,0" Command="{Binding AddAttachment}" Content="Add Atachment" Width="auto"/>
             <TextBlock Text="{Binding Path=Attachments, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         </StackPanel>
 

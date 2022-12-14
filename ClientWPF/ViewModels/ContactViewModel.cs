@@ -13,6 +13,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Text.RegularExpressions;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace ClientWPF.ViewModels
 {
@@ -281,7 +282,27 @@ namespace ClientWPF.ViewModels
         public string To { get; set; }
         public string From { get; set; }
         ///////////////////////////////add Attachment
-
+        private RelayCommand _addAttachment;
+        public RelayCommand AddAttachment
+        {
+            get
+            {
+                return _addAttachment ?? (_addAttachment =
+                    new RelayCommand(obj =>
+                    {
+                        OpenFileDialog openFile = new OpenFileDialog();
+                        openFile.Filter = "All files (*.*) | *.*";
+                        openFile.Multiselect = true;
+                        if(openFile.ShowDialog(_windowMessage) != false)
+                        {
+                            foreach (var item in openFile.FileNames)
+                            {
+                                Attachments = Attachments + item + ";";
+                            }
+                        }
+                    }));
+            }
+        }
         ///////////////////////////////send message
     }
 }
