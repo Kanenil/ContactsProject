@@ -7,11 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Views\Fonts\Montserrat.otf" />
+    <None Remove="Views\Images\backgroundImage.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BusinnesLogicLayer\BusinnesLogicLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Views\Fonts\Montserrat.otf" />
+    <Resource Include="Views\Images\backgroundImage.jpg" />
   </ItemGroup>
 
 </Project>

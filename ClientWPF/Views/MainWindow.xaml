@@ -3,10 +3,85 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClientWPF.Views"
+        xmlns:cmd="clr-namespace:ClientWPF.Commands"
+        xmlns:local="clr-namespace:ClientWPF.ViewModels"
+        d:DataContext="{d:DesignInstance Type=local:ContactViewModel}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="MainWindow" Height="450" Width="750">
+    
+    <Window.Background>
+        <ImageBrush ImageSource="Images/backgroundImage.jpg"/>
+    </Window.Background>
+    
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="18"></Setter>
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="Height" Value="30"></Setter>
+            <Setter Property="Width" Value="150"></Setter>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="Fonts/#Montserrat"/>
+            <Setter Property="FontSize" Value="12"></Setter>
+            <Setter Property="Background" Value="YellowGreen"></Setter>
+            <Setter Property="Height" Value="20"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+        </Style>
+    </Window.Resources>
+    
+    <Grid Margin="90" Background="#FF1877D0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.2*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.2*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0">Find</TextBlock>
+            <TextBox Grid.Column="1" Margin="0,0,100,0" Name="SearchWord" Text="{Binding Path=SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+            <Button x:Name="add" Grid.Column="2" Height="30" Width="80" FontSize="18" Command="{Binding CreateOpenWindow}">Add</Button>
+        </Grid>
+
+        <DataGrid Grid.Row="1" CanUserAddRows="False" FontSize="14" HorizontalAlignment ="Center" Name="ListContact" AutoGenerateColumns="False" ItemsSource="{Binding Contacts}" Margin="5">
+            <DataGrid.Columns>
+                <DataGridTextColumn IsReadOnly="True" Header="Surname" Binding="{Binding Path=Surname}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Name" Binding="{Binding Path=Name}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Patronymic" Binding="{Binding Path=Patronymic}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Phone" Binding="{Binding Path=Phone}"/>
+                <DataGridTextColumn IsReadOnly="True" Header="Email" Binding="{Binding Path=Email}"/>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Button Background="Yellow" Command="{Binding Path=DataContext.CreateOpenWindow, 
+                                RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding ElementName=ListContact , Path=SelectedItem}">Edit</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <Button Background="Red" Command="{Binding Path=DataContext.DeleteContact, 
+                                RelativeSource= {RelativeSource FindAncestor, AncestorType={x:Type Window}}}" CommandParameter="{Binding ElementName=ListContact , Path=SelectedItem}">Delete</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
         
     </Grid>
 </Window>

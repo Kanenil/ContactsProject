@@ -14,11 +14,11 @@ using System.Windows.Shapes;
 namespace ClientWPF.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for AddContactWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class AddContactWindow : Window
     {
-        public MainWindow(ContactViewModel model)
+        public AddContactWindow(ContactViewModel model)
         {
             InitializeComponent();
             this.DataContext = model;
