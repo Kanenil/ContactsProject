@@ -278,6 +278,7 @@ namespace ClientWPF.ViewModels
         ///////////////////////////////message item
         public string Subject { get; set; }
         public string Body { get; set; }
+        private List<string> _attachments;
         public string Attachments { get; set; }
         public string To { get; set; }
         public string From { get; set; }
@@ -295,10 +296,10 @@ namespace ClientWPF.ViewModels
                         openFile.Multiselect = true;
                         if(openFile.ShowDialog(_windowMessage) != false)
                         {
+                            _attachments = new List<string>();
                             foreach (var item in openFile.FileNames)
-                            {
-                                Attachments = Attachments + item + ";";
-                            }
+                                _attachments.Add(item);
+                            Attachments = $"Current attachments: {_attachments.Count}";
                         }
                     }));
             }
